@@ -17,50 +17,48 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th scope="col">Student Id</th>
+        <th scope="col">Number of student</th>
         <th scope="col">Student Name</th>
         <th scope="col">Point</th>
         <th scope="col">Last seen in class</th>
         <th scope="col">Check-in</th>
         <th scope="col">Add/Remove Points</th>
         <th scope="col">Activities</th>
-        <th scope="col">Submit</th>
       </tr>
     </thead>
     <tbody>
-      {% for student in all_students %}
-      <tr>
-        <th scope="row">{{loop.index}}</th>
-        <td>{{student[1]}}</td>
-        <td>{{student[2]}}</td>
-        <td>{{student[3].strftime('%Y-%m-%d')}}</td>
-
-        <form method="POST" , action="">
-          {{ form.hidden_tag() }}
+      <form method="POST" , action="">
+        {% for student in all_students %}
+        <tr class="student_row">
+          <th scope="row">{{loop.index}}</th>
+          <td>{{student[1]}}</td>
+          <td>{{student[2]}}</td>
+          <td>{{student[3].strftime('%Y-%m-%d')}}</td>
           <td>
-            <input type="checkbox" name="mycheckbox {{student[0]}}">
+            <input class="student_checkin" type="checkbox" name="mycheckbox {{student[0]}}">
           </td>
           <td>
             <div class="form-group">
-              {{ form.point(class="form-control form-control") }}
+              <input class="form-control form-control student_point" id="point{{student[0]}}" name="point{{student[0]}}" type="text"
+                value="">
             </div>
           <td>
             <div class="form-group">
-              {{ form.activities(class="form-control form-control") }}
+              <input class="form-control form-control student_activity"  id="activities{{student[0]}}" name="activities{{student[0]}}"
+                type="text" value="">
             </div>
           </td>
           <td>
-            <div class="form-group">
-              <input type="hidden" id="student_id" name="student_id" value="{{ student[0] }}">
-              {{ form.submit(class="btn btn-outline-info") }}
-            </div>
+            <input class="student_id" type="hidden" name="student_id" value="{{student[0]}}">
           </td>
-          <!-- </form> -->
-        </form>
+      </form>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  <div class="container" style="text-align: center;">
+    <button type="button" class="btn btn-primary" id="submit" name="submit">Submit</button>
+  </div>
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -72,6 +70,8 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
+
+    <script src="/static/form.js"></script>
 </body>
 
 </html>
