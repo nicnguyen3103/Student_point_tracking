@@ -1,3 +1,6 @@
+function reload () { 
+    location.reload();}
+
 document.addEventListener('DOMContentLoaded', function(event) {
     var submitButton = document.getElementById("submit")
     submitButton.addEventListener("click",ajax_form_submit);
@@ -28,7 +31,13 @@ document.addEventListener('DOMContentLoaded', function(event) {
             },
             body: JSON.stringify(student_datas)
             }).then(res=>res.json())
-            .then(res => console.log(res));
+            .then(res => {
+                console.log(res);
+                if (res.success == true){
+                    console.log ("clear function");
+                    reload();
+                }
+            });
         
     }
 

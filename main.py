@@ -66,19 +66,32 @@ def home():
     elif request.method == 'POST':
         student_data = request.get_json()
         for data in student_data:
-            latest_point = Logs.query.with_entities(Logs.total_point).filter_by(student_id=data['id']).order_by(desc(Logs.log_id)).first()[0]
-            print(latest_point)
-            if data['checkin'] == True:
+            # print(data['id'], type(data['checkin']))
+            if data['checkin']:
+                # print('chekin success')
+                latest_point = Logs.query.with_entities(Logs.total_point).filter_by(student_id=data['id']).order_by(desc(Logs.log_id)).first()[0]
                 attendance = Logs(student_id=data['id'], activities='Attendance', point_gain=ATTENDANCE_POINT, total_point=latest_point + int(ATTENDANCE_POINT) )
                 db.session.add(attendance)
                 db.session.commit()
+                # print('end of getting attendance')
             if data['activity']!='' or data['point'] != '': 
+                # print('other activities success')
+                latest_point = Logs.query.with_entities(Logs.total_point).filter_by(student_id=data['id']).order_by(desc(Logs.log_id)).first()[0]
                 new_log = Logs(student_id=data['id'], activities=data['activity'], point_gain=int(data['point']), total_point=latest_point + int(data['point']) )
                 db.session.add(new_log)
                 db.session.commit()
-            
-        return redirect(url_for('home'))
+        resp = jsonify(success=True)
+        return resp
     
+@app.route('/log')
+def log():
+    log_data = db.session.query(Logs, Student.name).join(Student).order_by(desc(Logs.log_id)).limit(50).all()
+    return render_template('log.html', log_data=log_data)
 
+@app.route('/student')
+def func_name():
+    student_data = db.session.query(Student, Course.course_name).join(Course).all()
+    print(student_data)
+    return render_template('student.html', students=student_data)
 if __name__ == '__main__':
     app.run(debug=True)
