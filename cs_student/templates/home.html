@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{%block content%}
+<section class="jumbotron text-center">
+  <div class="container">
+    <h1 class="jumbotron-heading">Student tracking app</h1>
+    <p>
+      <a href="{{url_for('add')}}" class="btn btn-primary my-2">Add new student</a>
+      <a href="#" class="btn btn-secondary my-2">View Dashboard</a>
+    </p>
+  </div>
+</section>
+<input class="form-control" id="myInput" type="text" placeholder="Search..">
+<br>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Number of student</th>
+      <th scope="col">Student Name</th>
+      <th scope="col">Point</th>
+      <th scope="col">Last seen in class</th>
+      <th scope="col">Check-in</th>
+      <th scope="col">Add/Remove Points</th>
+      <th scope="col">Activities</th>
+      <th scope="col">Note</th>
+
+    </tr>
+  </thead>
+  <tbody id="myTable">
+    <form id="myForm" method="POST" action="">
+      {% for student in all_students %}
+      <tr class="student_row">
+        <th scope="row">{{loop.index}}</th>
+        <td>{{student[0].name}}</td>
+        <td>{{student[1]}}</td>
+        <td>{{student[2].strftime('%d-%m-%Y')}}</td>
+        <td>
+          <input class="student_checkin" type="checkbox" name="mycheckbox {{student[0].id}}">
+        </td>
+        <td>
+          <div class="form-group">
+            <input class="form-control form-control student_point" id="point{{student[0].id}}"
+              name="point{{student[0].id}}" type="text" value="">
+          </div>
+        <td>
+          <div class="form-group">
+            <select class="form-control student_activity" id="activities{{student[0].id}}"
+              name="activities{{student[0].id}}" value="">
+              <option></option>
+              <option>Quiz</option>
+              <option>Weekly Project</option>
+              <option>Attendance</option>
+              <option>Class Activities</option>
+              <option>Others</option>
+            </select>
+        </td>
+        <td>
+          </div>
+          <div class="form-group">
+            <input class="form-control form-control student_note" id="note{{student[0].id}}"
+              name="note{{student[0].id}}" type="text" value="">
+          </div>
+        </td>
+        <td>
+          <input class="student_id" type="hidden" name="student_id" value="{{student[0].id}}">
+        </td>
+    </form>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="container" style="text-align: center;">
+  <button type="button" class="btn btn-primary" id="submit" name="submit">Submit</button>
+</div>
+
+<script src="/static/form.js"></script>
+{% endblock content %}

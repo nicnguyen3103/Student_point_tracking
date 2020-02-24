@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{%block content%}
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">Student Log</h1>
+        <p>
+            <a href="{{url_for('add')}}" class="btn btn-primary my-2">Add new student</a>
+            <a href="#" class="btn btn-secondary my-2">View Dashboard</a>
+        </p>
+    </div>
+</section>
+
+<input class="form-control" id="myInput" type="text" placeholder="Search..">
+<br>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Log_id</th>
+            <th scope="col">Student name</th>
+            <th scope="col">Point gain</th>
+            <th scope="col">Activities</th>
+            <th scope="col">Date</th>
+        </tr>
+    </thead>
+    <tbody id="myTable">
+        {% for data in log_data %}
+        <tr class="log_row">
+            <th scope="row">{{data[0].id}}</th>
+            <td>{{data[1]}}</td>
+            <td>{{data[0].point}}</td>
+            <td>{{data[0].activities}}</td>
+            <td>{{data[0].date.strftime('%d-%m-%Y')}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}

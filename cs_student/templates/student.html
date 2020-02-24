@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{%block content%}
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">Student List</h1>
+        <p>
+            <a href="{{url_for('add')}}" class="btn btn-primary my-2">Add new student</a>
+            <a href="#" class="btn btn-secondary my-2">View Dashboard</a>
+        </p>
+    </div>
+</section>
+
+<input class="form-control" id="myInput" type="text" placeholder="Search..">
+<br>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Student name</th>
+            <th scope="col">Cohort</th>
+            <th scope="col">Email</th>
+            <th scope='col'>Phone</th>
+            <th scope='col'>Remove Student</th>
+        </tr>
+    </thead>
+    <tbody id="myTable">
+        {% for student in students %}
+        <tr class="log_row">
+            <th scope="row">{{student[0].name}}</th>
+            <td>{{student[1]}}</td>
+            <td>{{student[0].email}}</td>
+            <td>{{student[0].phone}}</td>
+            <td>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal"
+                    data-target="#deleteModal{{student[0].id}}">
+                    Remove
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="deleteModal{{student[0].id}}" tabindex="-1" role="dialog"
+                    aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Remove the student from class?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                                <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                                <form action="{{url_for('delete', student_id=student[0].id)}}" method="POST">
+                                    <input class="btn1 btn-danger btn-sm m-1" type="submit" value="Delete">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
