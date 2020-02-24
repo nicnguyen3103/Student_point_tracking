@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import render_template, redirect, url_for, request,jsonify
 from cs_student import app, db
 from cs_student.forms import AddStudent
@@ -17,6 +18,16 @@ SPREADSHEET_KEY = '17N5hWt0Eup-tG5HmjKzd7blk_wquVVwHZau7Q_zhGp4'
 
 credential = os.environ.get("GOOGLE_API_CREDENTIALS")
 
+
+def get_credentials():
+    scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive'] #Spectify the API that you want to have access to
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(credential, scope) #give the credentials form the json file you just download 
+    return credentials
+
+gc = gspread.authorize(get_credentials())
+sheet = gc.open_by_key(SPREADSHEET_KEY)
+wks_log = sheet.worksheet("Log")
+
 def get_credentials():
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive'] #Spectify the API that you want to have access to
     credentials = ServiceAccountCredentials.from_json_keyfile_name(credential, scope) #give the credentials form the json file you just download 
@@ -28,7 +39,7 @@ def home():
     all_students = []
     last_log = db.session.query(Attendance.student_id, func.max(Attendance.date).label("date")).group_by(Attendance.student_id).subquery()
     all_students = db.session.query(Student, func.sum(Logs.point).label("total_point"), Logs.date).join(Logs).join(last_log).group_by(Student.id).order_by(desc('total_point'), desc(Logs.id)).all()
-    if request.method == 'GET':
+    if request.method == 'GET':Logs.date
         return render_template('home.html', all_students=all_students)
     elif request.method == 'POST':
         student_data = request.get_json()
@@ -40,10 +51,20 @@ def home():
                 db.session.add(checkin)
                 db.session.add(attendance)
                 db.session.commit()
+
+                student_name = Student.query.get_or_404(data['id'])
+                print(student_name.name)
+
+                wks_log.append_row([datetime.utcnow().strftime('%d-%m-%Y'), student_name.name, 10, "Attendance"], value_input_option='RAW')
+
             if data['activity']!='' or data['point'] != '': 
                 new_log = Logs(student_id=data['id'], activities=data['activity'], point=int(data['point']))
                 db.session.add(new_log)
                 db.session.commit()
+
+                student_name = Student.query.get_or_404(data['id'])
+                wks_log.append_row([datetime.utcnow().strftime('%d-%m-%Y'), student_name.name, int(data['point']), data['activity'], data['note']], value_input_option='RAW')
+
         resp = jsonify(success=True)
         return resp
     

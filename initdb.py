@@ -1,4 +1,4 @@
-from cs_student import db
+from cs_student import app,db
 from cs_student.models import Student, Course, Logs, Attendance
 import datetime 
 d = datetime.date(2020, 2, 17)
