@@ -18,7 +18,8 @@ cloud_sql_connection_name = os.environ.get("CLOUD_SQL_CONNECTION_NAME")
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///site.db"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/'
+# app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgres+pg8000://{db_user}:{db_pass}@/{db_name}?unix_sock=/cloudsql/{cloud_sql_connection_name}/.s.PGSQL.5432'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'somekey'
 db = SQLAlchemy(app)

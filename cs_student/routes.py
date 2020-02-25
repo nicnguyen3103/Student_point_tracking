@@ -13,9 +13,9 @@ from sqlalchemy import text
 
 
 # Other static variable: 
-ATTENDANCE_POINT = 10
-LATE_POINT = -10
-SPREADSHEET_KEY = '17N5hWt0Eup-tG5HmjKzd7blk_wquVVwHZau7Q_zhGp4'
+ATTENDANCE_POINT = 1
+LATE_POINT = -1
+SPREADSHEET_KEY = '1734ukh0HSyJYO6Iv3nMgN7_6qSCfaccQClFT7O4yBZ4'
 
 credential = os.environ.get("GOOGLE_API_CREDENTIALS")
 
