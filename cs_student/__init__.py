@@ -8,7 +8,8 @@ db_name = os.environ.get("DB_NAME")
 cloud_sql_connection_name = os.environ.get("CLOUD_SQL_CONNECTION_NAME")
 # print(cloud_sql_connection_name)
 # cloud_sql_proxy 
-# run this on the terminal to open the proxy: ./cloud_sql_proxy -instances=tensorflowdeployment:asia-southeast1:student-tracking=tcp:5432 &
+# grant permission first chmod +x cloud_sql_proxy
+# run this on the terminal to open the proxy: ./cloud_sql_proxy -instances=tensorflowdeployment:asia-southeast1:coderschool-student=tcp:5432 &
 # print(f'postgresql+psycopg2://{db_user}:{db_pass}@localhost:5432/')
 
 # cloud_sql_address on App Engine 

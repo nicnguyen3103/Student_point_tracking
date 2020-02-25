@@ -9,6 +9,7 @@ import json
 import os 
 import gspread 
 from oauth2client.service_account import ServiceAccountCredentials
+from sqlalchemy import text
 
 
 # Other static variable: 
@@ -28,18 +29,27 @@ gc = gspread.authorize(get_credentials())
 sheet = gc.open_by_key(SPREADSHEET_KEY)
 wks_log = sheet.worksheet("Log")
 
-def get_credentials():
-    scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive'] #Spectify the API that you want to have access to
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(credential, scope) #give the credentials form the json file you just download 
-    return credentials
-
 @app.route('/home', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 def home():
     all_students = []
-    last_log = db.session.query(Attendance.student_id, func.max(Attendance.date).label("date")).group_by(Attendance.student_id).subquery()
-    all_students = db.session.query(Student, func.sum(Logs.point).label("total_point"), Logs.date).join(Logs).join(last_log).group_by(Student.id).order_by(desc('total_point'), desc(Logs.id)).all()
-    if request.method == 'GET':Logs.date
+    query = '''
+    SELECT s.id, s.name, p.total_point, d.latest_date FROM student as s 
+    JOIN (SELECT student_id, sum(point) as total_point FROM logs GROUP BY student_id) as p 
+    ON p.student_id = s.id
+    JOIN (SELECT student_id, max(date) as latest_date FROM attendance GROUP BY student_id) as d 
+    On d.student_id = s.id
+    ORDER BY total_point DESC;
+    '''
+    result = db.session.execute(text(query))
+    for student in result:
+        all_students.append(student)
+    # latest_date = db.session.query(Attendance.student_id, func.max(Attendance.date).label("latest_date")).group_by(Attendance.student_id).subquery()
+    # sum_point = db.session.query(Logs.student_id, func.sum(Logs.point).label("total_point")).group_by(Logs.student_id).subquery()
+        
+    # all_students = db.session.query(Student.id, Student.name, sum_point.c.total_point, latest_date.c.latest_date).join(latest_date).join(sum_point).group_by(Student.id).order_by(desc('total_point')).all()
+    # all_students = db.session.query(Student, func.sum(Logs.point).label("total_point"), Logs.date).join(Logs).join(last_log).group_by(Student.id).order_by(desc('total_point'), desc(Logs.id)).all()
+    if request.method == 'GET':
         return render_template('home.html', all_students=all_students)
     elif request.method == 'POST':
         student_data = request.get_json()
